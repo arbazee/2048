@@ -26,7 +26,7 @@ public class EndGame implements Sprite{
     public void draw(Canvas canvas) {
 
          canvas.drawBitmap(bmp,screenWidth / 2 - bmp.getWidth() / 2,
-                 screenHeight / 2 - bmp.getHeight()/2, null);
+                 screenHeight / 2 - bmp.getHeight() / 2, null);
     }
 
     @Override

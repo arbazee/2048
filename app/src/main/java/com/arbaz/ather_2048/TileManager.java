@@ -54,10 +54,9 @@ public class TileManager implements TileManagerCallback, Sprite {
         drawablesList.add(R.drawable.fifteen);
         drawablesList.add(R.drawable.sixteen);
 
-        for (int i = 0; i < 16; i++) {
-            // original
-            // i <=16 & i-1
-            Bitmap bmp = BitmapFactory.decodeResource(resources,drawablesList.get(i));
+        for (int i = 1; i <= 16; i++) {
+
+            Bitmap bmp = BitmapFactory.decodeResource(resources,drawablesList.get(i-1));
             Bitmap tileBmp = Bitmap.createScaledBitmap(bmp,standardSize,standardSize,false);
             tileBitmap.put(i,tileBmp);
 
@@ -85,7 +84,7 @@ public class TileManager implements TileManagerCallback, Sprite {
     public void draw(Canvas canvas) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                if (matrix[i][j] !=null){
+                if (matrix[i][j] != null)   {
                     matrix[i][j].draw(canvas);
                 }
             }
@@ -100,7 +99,7 @@ public class TileManager implements TileManagerCallback, Sprite {
     public void update() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                if (matrix[i][j] !=null){
+                if (matrix[i][j] != null){
                     matrix[i][j].update();
                 }
             }
@@ -120,6 +119,11 @@ public class TileManager implements TileManagerCallback, Sprite {
             spawn();
             checkEndGame();
         }
+    }
+
+    @Override
+    public void updateScore(int delta) {
+        callback.updateScore(delta);
     }
 
     private void spawn() {
@@ -149,13 +153,13 @@ public class TileManager implements TileManagerCallback, Sprite {
                         for (int j = 0; j < 4; j++) {
                             if (matrix[i][j] != null){
                                 newMatrix[i][j] = matrix[i][j];
-                                for (int k = i-1; k >=0 ; k--) {
+                                for (int k = i-1; k >= 0; k--) {
                                     if (newMatrix[k][j] == null){
                                         newMatrix[k][j] = matrix[i][j];
                                         if (newMatrix[k+1][j] == matrix[i][j]){
                                             newMatrix[k+1][j] = null;
                                         }
-                                    }else if (newMatrix[k][j].getValue() == matrix[i][j].getValue()
+                                    } else if (newMatrix[k][j].getValue() == matrix[i][j].getValue()
                                     && !newMatrix[k][j].toIncrement()){
                                         newMatrix[k][j] = matrix[i][j].increment();
                                         if (newMatrix[k+1][j] == matrix[i][j]){
@@ -247,7 +251,7 @@ public class TileManager implements TileManagerCallback, Sprite {
                 case LEFT:
                     for (int i = 0; i < 4; i++) {
                         for (int j = 0; j < 4; j++) {
-                            if (matrix[i][j] !=null){
+                            if (matrix[i][j] != null){
                                 newMatrix[i][j] = matrix[i][j];
                                 for (int k = j-1; k >=0 ; k--) {
                                     if (newMatrix[i][k] == null){
@@ -348,8 +352,9 @@ public class TileManager implements TileManagerCallback, Sprite {
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     if (newMatrix[i][j] != matrix[i][j]){
-                        moving = false;
-                        spawn();
+                        toSpawn = true;
+                        //spawn();
+                        break;
                     }
                 }
             }
@@ -375,7 +380,7 @@ public class TileManager implements TileManagerCallback, Sprite {
                     if (i > 0 && matrix[i-1][j].getValue() == matrix[i][j].getValue() ||
                             (i < 3 && matrix[i+1][j].getValue() == matrix[i][j].getValue()) ||
                             (j > 0 && matrix[i][j-1].getValue() == matrix[i][j].getValue()) ||
-                            (j < 3 && matrix[i][j+1].getValue() == matrix[i][j].getValue())){
+                            (j < 3 && matrix[i][j+1].getValue() == matrix[i][j].getValue())) {
 
                         endGame = false;
                     }

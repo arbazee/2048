@@ -2,6 +2,8 @@ package com.arbaz.ather_2048;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -13,6 +15,7 @@ import androidx.annotation.NonNull;
 
 import com.arbaz.ather_2048.sprites.EndGame;
 import com.arbaz.ather_2048.sprites.Grid;
+import com.arbaz.ather_2048.sprites.Score;
 
 public class GameManager extends SurfaceView implements SurfaceHolder.Callback, SwipeCallback, GameManagerCallback{
 
@@ -23,6 +26,10 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     private SwipeListener swipeListener;
     private boolean endGame = false;
     private EndGame endGameSprite;
+    private Score score;
+    private static final String APP_NAME  = "2048-game";
+    private Bitmap restartButton;
+    private int restartButtonX, restartButtonY, restartButtonSize;
 
     public GameManager(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -41,11 +48,26 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         grid = new Grid(getResources(),screenWidth,screenHeight,standardSize);
         tileManager = new TileManager(getResources(),standardSize,screenWidth,screenHeight,this);
         endGameSprite = new EndGame(getResources(),screenWidth,screenHeight);
+
+        score = new Score(getResources(),screenWidth,screenHeight,standardSize,
+                getContext().getSharedPreferences(APP_NAME,Context.MODE_PRIVATE));
+
+        restartButtonSize = (int) getResources().getDimension(R.dimen.restart_button_size);
+        restartButtonX = screenWidth / 2 + 2 * standardSize - restartButtonSize;
+        restartButtonY = screenHeight / 2 - 2 * standardSize - 3 * restartButtonSize / 2;
+
+        Bitmap restartBmp = BitmapFactory.decodeResource(getResources(),R.drawable.restart);
+        restartButton = Bitmap.createScaledBitmap(restartBmp,restartButtonSize,restartButtonSize,false);
     }
 
     public void initGame(){
         endGame = false;
         tileManager.initGame();
+
+        score = new Score(getResources(),screenWidth,screenHeight,standardSize,
+                getContext().getSharedPreferences(APP_NAME,Context.MODE_PRIVATE));
+
+
     }
 
     @Override
@@ -91,7 +113,9 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         canvas.drawRGB(255,255,255);
         grid.draw(canvas);
         tileManager.draw(canvas);
+        canvas.drawBitmap(restartButton,restartButtonX,restartButtonY,null);
 
+        score.draw(canvas);
         if (endGame){
             endGameSprite.draw(canvas);
         }
@@ -104,7 +128,15 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                 initGame();
             }
         } else {
-            swipeListener.onTouchEvent(event);
+            float eventX = event.getAxisValue(MotionEvent.AXIS_X);
+            float eventY = event.getAxisValue(MotionEvent.AXIS_Y);
+            if (event.getAction() == MotionEvent.ACTION_DOWN &&
+                eventX > restartButtonX && eventX < restartButtonX + restartButtonSize &&
+                eventY > restartButtonY && eventY < restartButtonY + restartButtonSize){
+                initGame();
+            } else {
+                swipeListener.onTouchEvent(event);
+            }
         }
 
 
@@ -119,5 +151,10 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     @Override
     public void gameOver() {
         endGame = true;
+    }
+
+    @Override
+    public void updateScore(int delta) {
+        score.updateScore(delta);
     }
 }

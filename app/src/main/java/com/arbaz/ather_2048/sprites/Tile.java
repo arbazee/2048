@@ -9,7 +9,7 @@ public class Tile implements Sprite {
     private int screenWidth,screenHeight;
     private int standardSize;
     private TileManagerCallback callback;
-    private int count = 3;
+    private int count = 1;
     private int currentX, currentY;
     private int destX,destY;
     private boolean moving = false;
@@ -57,6 +57,8 @@ public class Tile implements Sprite {
             if (increment){
                 count++;
                 increment = false;
+                int amount = (int) Math.pow(2,count);
+                callback.updateScore(amount);
             }
             callback.finishedMoving(this);
         }
