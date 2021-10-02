@@ -19,6 +19,7 @@ public class TileManager implements TileManagerCallback, Sprite {
     private Tile tile;
     private HashMap<Integer, Bitmap> tileBitmap = new HashMap<>();
     private ArrayList<Integer> drawablesList = new ArrayList<>();
+    private Tile[][] matrix = new Tile[4][4];
 
     public TileManager(Resources resources,int standardSize, int screenWidth, int screenHeight){
         this.standardSize = standardSize;
@@ -26,7 +27,8 @@ public class TileManager implements TileManagerCallback, Sprite {
         this.screenHeight = screenHeight;
         this.resources = resources;
         initBitmaps();
-        tile = new Tile(standardSize,screenWidth,screenHeight,this);
+        tile = new Tile(standardSize,screenWidth,screenHeight,this,1,1);
+        matrix[1][1] = tile;
     }
 
     private void initBitmaps(){
@@ -47,8 +49,8 @@ public class TileManager implements TileManagerCallback, Sprite {
         drawablesList.add(R.drawable.fifteen);
         drawablesList.add(R.drawable.sixteen);
 
-        for (int i = 0; i <= 16; i++) {
-            Bitmap bmp = BitmapFactory.decodeResource(resources,drawablesList.get(i-1));
+        for (int i = 0; i < 16; i++) {
+            Bitmap bmp = BitmapFactory.decodeResource(resources,drawablesList.get(i));
             Bitmap tileBmp = Bitmap.createScaledBitmap(bmp,standardSize,standardSize,false);
             tileBitmap.put(i,tileBmp);
 
@@ -62,11 +64,29 @@ public class TileManager implements TileManagerCallback, Sprite {
 
     @Override
     public void update() {
-
+        tile.update();
     }
 
     @Override
     public Bitmap getBitmap(int count) {
         return tileBitmap.get(count);
+    }
+
+    public void onSwipe(SwipeCallback.Direction direction){
+        switch (direction){
+
+            case UP:
+                tile.move(0,1);
+                break;
+            case DOWN:
+                tile.move(3,1);
+                break;
+            case LEFT:
+                tile.move(1,0);
+                break;
+            case RIGHT:
+                tile.move(1,3);
+                break;
+        }
     }
 }
