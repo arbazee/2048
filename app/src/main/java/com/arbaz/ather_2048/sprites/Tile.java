@@ -13,7 +13,8 @@ public class Tile implements Sprite {
     private int currentX, currentY;
     private int destX,destY;
     private boolean moving = false;
-    private int speed = 10;
+    private int speed = 200;
+    private boolean increment = false;
 
     public Tile(int standardSize, int screenWidth, int screenHeight, TileManagerCallback callback,
                 int matrixX,int matrixY){
@@ -25,6 +26,7 @@ public class Tile implements Sprite {
         this.currentX = destX = screenWidth / 2 - 2 * standardSize + matrixY * standardSize;
         this.currentY = destY = screenHeight / 2 - 2 * standardSize + matrixX * standardSize;
 
+
     }
 
     public void move(int matrixX, int matrixY){
@@ -33,11 +35,30 @@ public class Tile implements Sprite {
         destY = screenHeight / 2 - 2 * standardSize + matrixX * standardSize;
     }
 
+    public int getValue(){
+        return count;
+    }
+
+    public Tile increment(){
+        increment = true;
+        return this;
+    }
+
+    public boolean toIncrement(){
+        return increment;
+    }
+
     @Override
     public void draw(Canvas canvas) {
         canvas.drawBitmap(callback.getBitmap(count), currentX, currentY, null);
         if (moving && currentX == destX && currentY == destY){
             moving = false;
+
+            if (increment){
+                count++;
+                increment = false;
+            }
+            callback.finishedMoving(this);
         }
     }
 
