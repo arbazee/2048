@@ -6,6 +6,6 @@
     <dimen name="score_width">100dp</dimen>
     <dimen name="score_height">15dp </dimen>
     <dimen name="score_text_size">15sp</dimen>
-    <dimen name="restart_button_size">50dp</dimen>
+    <dimen name="restart_button_size">35dp</dimen>
 
 </resources>

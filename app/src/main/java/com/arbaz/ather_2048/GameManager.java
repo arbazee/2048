@@ -56,7 +56,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         restartButtonX = screenWidth / 2 + 2 * standardSize - restartButtonSize;
         restartButtonY = screenHeight / 2 - 2 * standardSize - 3 * restartButtonSize / 2;
 
-        Bitmap restartBmp = BitmapFactory.decodeResource(getResources(),R.drawable.restart_1);
+        Bitmap restartBmp = BitmapFactory.decodeResource(getResources(),R.drawable.restart);
         restartButton = Bitmap.createScaledBitmap(restartBmp,restartButtonSize,restartButtonSize,false);
     }
 
